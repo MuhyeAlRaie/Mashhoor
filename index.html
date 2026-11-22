@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mashhoor Games Suite — Interactive Games</title>
+  <meta name="description" content="Official interactive games for Mashhoor Fried Chicken: Mashhoor XO, Motion Challenge and Chicken Dash.">
+  <meta name="theme-color" content="#EE2231">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mashhoor Games">
+  <link rel="stylesheet" href="shared/ui.css">
+  <style>
+    .hero-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 6px 18px calc(30px + var(--sab)); gap: 26px; max-width: 1120px; margin: 0 auto; width: 100%; }
+    .hero { gap: 10px; text-align: center; padding-top: 16px; }
+    .hero-logo { height: 112px; width: auto; margin-bottom: 4px; }
+    .hero-tag { font-size: 17px; max-width: 560px; line-height: 1.55; }
+    .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 22px; width: 100%; }
+    .games-grid .game-card { animation: slideUpFade .55s ease both; }
+    .games-grid .game-card:nth-child(2) { animation-delay: .08s; }
+    .games-grid .game-card:nth-child(3) { animation-delay: .16s; }
+    .foot-note { color: var(--muted); font-size: 13.5px; max-width: 660px; text-align: center; line-height: 1.6; }
+    .foot { color: var(--muted); font-size: 13.5px; display: flex; gap: 10px; align-items: center; padding-bottom: 8px; }
+    .foot a { font-weight: 700; }
+
+    /* ---- card previews ---- */
+    .gc-xo { background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-deep)); }
+    .gc-xo .mini-board { display: grid; grid-template-columns: repeat(3, 54px); grid-auto-rows: 54px; gap: 8px; transform: rotate(-3deg); }
+    .gc-xo .cellp { background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+    .gc-xo .cellp img { width: 74%; height: 74%; object-fit: contain; position: static; filter: none; }
+    .gc-motion { background: linear-gradient(135deg, #2B1316, #121114); }
+    .gc-motion .hand-ic { position: absolute; width: 110px; height: 110px; color: rgba(255,255,255,.16); }
+    .gc-motion img.gc-p1 { width: 96px; top: 34px; left: 12%; }
+    .gc-motion img.gc-p2 { width: 104px; bottom: 26px; right: 10%; }
+    .gc-dash { background: linear-gradient(180deg, #A9121C, var(--brand-primary) 52%, #E8642D); }
+    .gc-dash img.gc-run { width: 112px; bottom: 14px; left: 50%; transform: translateX(-50%); }
+    .gc-dash .cloud { position: absolute; background: #fff; border-radius: 999px; opacity: .9; }
+    .gc-dash .cloud.c1 { width: 74px; height: 22px; top: 34px; left: 12%; }
+    .gc-dash .cloud.c2 { width: 52px; height: 16px; top: 64px; right: 14%; }
+    .gc-dash .road { position: absolute; bottom: 0; left: 0; right: 0; height: 34px; background: #26262c; }
+    .gc-dash .road::after { content: ''; position: absolute; top: 15px; left: 0; right: 0; height: 4px; background: repeating-linear-gradient(90deg, #FFC53D 0 26px, transparent 26px 52px); }
+
+    @media (max-width: 560px) {
+      .hero-logo { height: 88px; }
+      .gc-xo .mini-board { grid-template-columns: repeat(3, 46px); grid-auto-rows: 46px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page bg-stripes">
+    <header class="topbar">
+      <img id="brandLogo" class="topbar-logo" alt="Mashhoor">
+      <div class="topbar-title" data-i18n="suiteTitle">Games Suite</div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <button class="btn btn-icon btn-ghost" id="langBtn" data-i18n-aria="language"><span class="lang-label">ع</span></button>
+        <button class="btn btn-icon btn-ghost" id="soundBtn" data-i18n-aria="sound"><span class="ic-slot" data-icon="sound"></span></button>
+        <a class="btn btn-icon btn-ghost" href="admin/index.html" data-i18n-aria="adminPanel"><span class="ic-slot" data-icon="gear"></span></a>
+      </div>
+    </header>
+
+    <main class="hero-wrap">
+      <section class="hero center col">
+        <img id="heroLogo" class="hero-logo anim-floaty" alt="Mashhoor logo">
+        <h1 class="title-xl"><span data-i18n="madeFor">Made for</span> <span id="heroBrandName">Mashhoor</span></h1>
+        <p class="hero-tag muted" data-i18n="suiteTagline">Official interactive games — play, win, enjoy the crunch!</p>
+        <button class="btn btn-dark btn-big mt-14" id="kioskBtn">
+          <span class="ic-slot" data-icon="expand"></span><span data-i18n="kioskMode">Kiosk fullscreen</span>
+        </button>
+      </section>
+
+      <section class="games-grid" aria-label="Games">
+        <a class="game-card" href="games/mashhoor-xo/index.html">
+          <div class="gc-media gc-xo">
+            <div class="mini-board" aria-hidden="true">
+              <div class="cellp"></div><div class="cellp"></div><div class="cellp" id="pChickenA"></div>
+              <div class="cellp"></div><div class="cellp" id="pChickenB"></div><div class="cellp"></div>
+              <div class="cellp"></div><div class="cellp" id="pBurger"></div><div class="cellp"></div>
+            </div>
+          </div>
+          <div class="gc-body">
+            <div class="gc-title" data-i18n="xoName">Mashhoor XO</div>
+            <p class="gc-desc" data-i18n="xoDesc">The classic tic-tac-toe showdown: Fried Chicken vs. Chicken Burger. Two players on one screen — or face the computer.</p>
+            <div class="gc-tags">
+              <span class="tag" data-i18n="tag2p">2 players</span>
+              <span class="tag dark" data-i18n="tagTouch">Touch-first</span>
+              <span class="tag dark" data-i18n="tagKiosk">Kiosk</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/mashhoor-motion/index.html">
+          <div class="gc-media gc-motion">
+            <span class="hand-ic ic-slot" data-icon="hand"></span>
+            <img class="gc-p1 anim-floaty" id="mFries" alt="">
+            <img class="gc-p2 anim-floaty" style="animation-delay:.7s" id="mChicken" alt="">
+          </div>
+          <div class="gc-body">
+            <div class="gc-title" data-i18n="motionName">Motion Challenge</div>
+            <p class="gc-desc" data-i18n="motionDesc">Catch flying Mashhoor products with your bare hands! Real-time hand tracking with your camera — solo or head-to-head.</p>
+            <div class="gc-tags">
+              <span class="tag" data-i18n="tagCamera">Camera</span>
+              <span class="tag dark" data-i18n="tag2p">2 players</span>
+              <span class="tag dark" data-i18n="tagTouch">Touch-first</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/chicken-dash/index.html">
+          <div class="gc-media gc-dash">
+            <span class="cloud c1"></span><span class="cloud c2"></span>
+            <img class="gc-run anim-floaty" id="mMascot" alt="">
+            <div class="road"></div>
+          </div>
+          <div class="gc-body">
+            <div class="gc-title" data-i18n="dashName">Chicken Dash</div>
+            <p class="gc-desc" data-i18n="dashDesc">Endless runner with the Mashhoor mascot. Swipe to dodge obstacles and collect products on your phone.</p>
+            <div class="gc-tags">
+              <span class="tag gold" data-i18n="tagPWA">PWA mobile</span>
+              <span class="tag dark" data-i18n="tagArcade">Arcade</span>
+              <span class="tag dark" data-i18n="tagTouch">Touch-first</span>
+            </div>
+          </div>
+        </a>
+      </section>
+
+      <p class="foot-note" data-i18n="settingsLocalNote">Settings and scores are stored locally on this device only.</p>
+      <footer class="foot">
+        <span>© <span id="year">2025</span> Mashhoor</span>·<a href="admin/index.html" data-i18n="adminPanel">Admin Panel</a>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="shared/icons.js"></script>
+  <script src="shared/i18n.js"></script>
+  <script src="shared/branding.js"></script>
+  <script src="shared/storage.js"></script>
+  <script src="shared/sound.js"></script>
+  <script src="shared/fullscreen.js"></script>
+  <script src="shared/fx.js"></script>
+  <script src="shared/pwa.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      /* inject icons */
+      document.querySelectorAll('.ic-slot').forEach(function (el) {
+        el.innerHTML = MashhoorIcons.svg(el.getAttribute('data-icon'));
+      });
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      var B = MashhoorBranding, S = MashhoorStore, SND = MashhoorSound;
+      var state = B.get();
+
+      function applyBrand() {
+        state = B.get();
+        document.getElementById('brandLogo').src = B.resolve(state.brand.logoLightBg);
+        document.getElementById('heroLogo').src = B.resolve(state.brand.logoLightBg);
+        document.getElementById('heroBrandName').textContent = state.brand.name;
+        document.getElementById('pChickenA').innerHTML = '<img alt="" src="' + B.resolve(state.products.chicken.image) + '">';
+        document.getElementById('pChickenB').innerHTML = '<img alt="" src="' + B.resolve(state.products.fries.image) + '">';
+        document.getElementById('pBurger').innerHTML = '<img alt="" src="' + B.resolve(state.products.burger.image) + '">';
+        document.getElementById('mFries').src = B.resolve(state.products.fries.image);
+        document.getElementById('mChicken').src = B.resolve(state.products.chicken.image);
+        document.getElementById('mMascot').src = B.resolve((state.dash.skins[0] || {}).image || 'assets/characters/skin-classic.png');
+        var sb = document.getElementById('soundBtn');
+        if (sb) sb.innerHTML = '<span class="ic-slot">' + MashhoorIcons.svg(state.sounds.enabled ? 'sound' : 'mute') + '</span>';
+      }
+      B.onChange(applyBrand);
+      applyBrand();
+
+      function toast(msg, isErr) {
+        var t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.toggle('error', !!isErr);
+        t.classList.add('show');
+        clearTimeout(t._h);
+        t._h = setTimeout(function () { t.classList.remove('show'); }, 2600);
+      }
+
+      var langBtn = document.getElementById('langBtn');
+      function langLabel() {
+        langBtn.querySelector('.lang-label').textContent = MashhoorI18N.lang === 'en' ? 'ع' : 'EN';
+      }
+      langBtn.addEventListener('click', function () {
+        MashhoorI18N.set(MashhoorI18N.lang === 'en' ? 'ar' : 'en');
+        langLabel();
+        SND.play('tap');
+      });
+      langLabel();
+
+      var soundBtn = document.getElementById('soundBtn');
+      soundBtn.addEventListener('click', function () {
+        var on = !(state.sounds.enabled !== false);
+        B.updatePath('sounds.enabled', on);
+        SND.play(on ? 'tap' : 'click');
+      });
+
+      var kioskBtn = document.getElementById('kioskBtn');
+      kioskBtn.addEventListener('click', function () {
+        if (!MashhoorFS.isSupported()) {
+          toast(MashhoorI18N.t('installHint'));
+          return;
+        }
+        MashhoorFS.toggle().then(function (ok) {
+          if (ok !== false) MashhoorFS.requestWakeLock();
+        });
+      });
+      MashhoorFS.onChange(function () {
+        kioskBtn.querySelector('.ic-slot').innerHTML = MashhoorIcons.svg(MashhoorFS.isFullscreen() ? 'shrink' : 'expand');
+      });
+
+      MashhoorPWA.register('./service-worker.js');
+      MashhoorI18N.apply();
+    })();
+  </script>
+</body>
+</html>

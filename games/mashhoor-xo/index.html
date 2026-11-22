@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mashhoor XO — Fried Chicken vs Chicken Burger</title>
+  <meta name="description" content="Mashhoor XO: tic-tac-toe between Mashhoor products. Two players on one touchscreen or play against the computer.">
+  <meta name="theme-color" content="#EE2231">
+  <link rel="icon" type="image/png" href="../../favicon.png">
+  <link rel="stylesheet" href="../../shared/ui.css">
+  <link rel="stylesheet" href="xo.css">
+</head>
+<body>
+  <div class="page app-fixed bg-stripes">
+    <header class="topbar">
+      <a class="btn btn-icon btn-ghost" href="../../index.html" data-i18n-aria="home"><span class="ic-slot" data-icon="home"></span></a>
+      <img class="topbar-logo sm" id="brandLogo" alt="Mashhoor">
+      <div class="topbar-title">Mashhoor XO</div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <button class="btn btn-icon btn-ghost" id="soundBtn" type="button" data-i18n-aria="sound"></button>
+        <button class="btn btn-icon btn-ghost" id="fsBtn" type="button" data-i18n-aria="fullscreen"></button>
+        <a class="btn btn-icon btn-ghost" href="../../admin/index.html" data-i18n-aria="adminPanel"><span class="ic-slot" data-icon="gear"></span></a>
+      </div>
+    </header>
+
+    <!-- ============ MENU SCREEN ============ -->
+    <div class="screens-wrap">
+    <section class="screen active" id="scrMenu">
+      <div class="menu-wrap">
+        <h1 class="title-xl center-txt" data-i18n="xoName">Mashhoor XO</h1>
+        <p class="muted center-txt xo-tag" data-i18n="xoTagline">Fried Chicken vs. Chicken Burger</p>
+
+        <div class="vs-row">
+          <div class="p-card">
+            <img id="p1Img" alt="Fried Chicken">
+            <div class="p-name" id="p1Name">Fried Chicken</div>
+            <div class="p-label" data-i18n="playerX">Player 1</div>
+          </div>
+          <div class="vs-badge" data-i18n="vs">vs</div>
+          <div class="p-card">
+            <img id="p2Img" alt="Chicken Burger">
+            <div class="p-name" id="p2Name">Chicken Burger</div>
+            <div class="p-label" data-i18n="playerO">Player 2</div>
+          </div>
+        </div>
+
+        <h2 class="title-lg center-txt mt-14" data-i18n="chooseMode">Choose a game mode</h2>
+        <div class="mode-row">
+          <button class="btn btn-primary btn-big" id="btnPvp" type="button">
+            <span class="ic-slot" data-icon="users"></span><span data-i18n="twoPlayers">2 Players</span>
+          </button>
+          <button class="btn btn-dark btn-big" id="btnCpu" type="button">
+            <span class="ic-slot" data-icon="cpu"></span><span data-i18n="vsComputer">vs Computer</span>
+          </button>
+        </div>
+
+        <div class="cpu-level">
+          <span class="muted bold" data-i18n="cpuLevel">Computer level</span>
+          <div class="seg" id="segLevel" role="group" aria-label="Computer level">
+            <button type="button" data-level="easy" data-i18n="easy">Easy</button>
+            <button type="button" data-level="normal" data-i18n="normal">Normal</button>
+            <button type="button" data-level="hard" data-i18n="hard">Hard</button>
+          </div>
+        </div>
+
+        <div class="card xo-how">
+          <span class="ic-slot" data-icon="info"></span>
+          <p data-i18n="xoHow">Take turns tapping empty cells. Line up three of your products across, down, or diagonally to win the round.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GAME SCREEN ============ -->
+    <section class="screen" id="scrGame">
+      <div class="players-bar">
+        <div class="chip player-chip" id="chip1">
+          <img alt=""><span class="p1-label"></span><span class="num" id="score1">0</span>
+        </div>
+        <div class="chip turn-chip" id="turnChip">
+          <img id="turnImg" alt=""><span id="turnText">Turn</span>
+        </div>
+        <div class="chip player-chip" id="chip2">
+          <span class="num" id="score2">0</span><span class="p2-label"></span><img alt="">
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <div class="board" id="board" role="grid" aria-label="Tic tac toe board"></div>
+        <div class="chip chip-plain draw-count">
+          <span data-i18n="draws">Draws</span><span class="num" id="scoreDraw">0</span>
+        </div>
+      </div>
+
+      <div class="game-actions">
+        <button class="btn btn-ghost" id="btnRestart" type="button">
+          <span class="ic-slot" data-icon="refresh"></span><span data-i18n="restart">Restart round</span>
+        </button>
+        <button class="btn btn-ghost" id="btnResetScores" type="button">
+          <span class="ic-slot" data-icon="trash"></span><span data-i18n="resetScores">Reset scores</span>
+        </button>
+        <button class="btn btn-ghost" id="btnMenu" type="button">
+          <span class="ic-slot" data-icon="home"></span><span data-i18n="home">Home</span>
+        </button>
+      </div>
+    </section>
+    </div>
+  </div>
+
+  <!-- ============ RESULT OVERLAY ============ -->
+  <div class="overlay" id="resultOverlay">
+    <div class="card result-card">
+      <img id="resultImg" class="result-img" alt="">
+      <h2 class="title-lg" id="resultTitle">Winner!</h2>
+      <p class="muted" id="resultSub"></p>
+      <div class="center gap-10 mt-20 wrap">
+        <button class="btn btn-primary" id="btnAgain" type="button">
+          <span class="ic-slot" data-icon="refresh"></span><span data-i18n="playNow">Play now</span>
+        </button>
+        <button class="btn btn-ghost" id="btnToMenu" type="button">
+          <span class="ic-slot" data-icon="home"></span><span data-i18n="home">Home</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="../../shared/icons.js"></script>
+  <script src="../../shared/i18n.js"></script>
+  <script src="../../shared/branding.js"></script>
+  <script src="../../shared/storage.js"></script>
+  <script src="../../shared/sound.js"></script>
+  <script src="../../shared/fullscreen.js"></script>
+  <script src="../../shared/fx.js"></script>
+  <script src="xo.js"></script>
+</body>
+</html>

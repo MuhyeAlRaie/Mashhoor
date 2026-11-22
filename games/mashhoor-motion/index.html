@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mashhoor Motion Challenge — Hand Tracking Game</title>
+  <meta name="description" content="Catch flying Mashhoor products with your hands. Real-time camera hand tracking — single player or two players.">
+  <meta name="theme-color" content="#EE2231">
+  <link rel="icon" type="image/png" href="../../favicon.png">
+  <link rel="stylesheet" href="../../shared/ui.css">
+  <link rel="stylesheet" href="motion.css">
+</head>
+<body>
+  <div class="page app-fixed bg-stripes" id="motionApp">
+    <header class="topbar" id="topbar">
+      <a class="btn btn-icon btn-ghost" href="../../index.html" data-i18n-aria="home"><span class="ic-slot" data-icon="home"></span></a>
+      <img class="topbar-logo sm" id="brandLogo" alt="Mashhoor">
+      <div class="topbar-title" data-i18n="motionName">Motion Challenge</div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <button class="btn btn-icon btn-ghost" id="soundBtn" type="button" data-i18n-aria="sound"></button>
+        <button class="btn btn-icon btn-ghost" id="fsBtn" type="button" data-i18n-aria="fullscreen"></button>
+        <a class="btn btn-icon btn-ghost" href="../../admin/index.html" data-i18n-aria="adminPanel"><span class="ic-slot" data-icon="gear"></span></a>
+      </div>
+    </header>
+
+    <div class="screens-wrap" id="screensWrap">
+
+      <!-- ============ MENU SCREEN ============ -->
+      <section class="screen active" id="scrMenu">
+        <div class="menu-wrap">
+          <h1 class="title-xl center-txt" data-i18n="motionName">Motion Challenge</h1>
+          <p class="muted center-txt" data-i18n="motionTagline">Catch products with your hands</p>
+
+          <div class="mode-row">
+            <button class="btn btn-primary btn-big" id="btnSingle" type="button">
+              <span class="ic-slot" data-icon="user"></span><span data-i18n="singlePlayer">Single player</span>
+            </button>
+            <button class="btn btn-dark btn-big" id="btnTwo" type="button">
+              <span class="ic-slot" data-icon="users"></span><span data-i18n="twoPlayersMotion">Two players</span>
+            </button>
+          </div>
+
+          <div class="settings-chips">
+            <span class="chip chip-plain"><span class="ic-slot" data-icon="timer"></span><span id="chipDuration">60s</span></span>
+            <span class="chip chip-plain"><span class="ic-slot" data-icon="bolt"></span><span id="chipDifficulty">Normal</span></span>
+          </div>
+
+          <div class="card how-card">
+            <div class="how-row"><span class="how-num">1</span><p data-i18n="instr1">Raise your open hand toward the camera.</p></div>
+            <div class="how-row"><span class="how-num">2</span><p data-i18n="instr2">Move your index fingertip to touch the flying products.</p></div>
+            <div class="how-row"><span class="how-num">3</span><p data-i18n="instr3">Grab as many as you can before time runs out!</p></div>
+            <p class="how-two" data-i18n="instrTwo">In two-player mode the screen splits in half.</p>
+          </div>
+
+          <div class="mode-row">
+            <button class="btn btn-ghost" id="btnPointer" type="button">
+              <span class="ic-slot" data-icon="hand"></span><span data-i18n="playWithPointer">Play with touch / mouse</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SETUP (CAMERA) SCREEN ============ -->
+      <section class="screen" id="scrSetup">
+        <div class="setup-wrap">
+          <h2 class="title-lg center-txt" data-i18n="cameraPrep">Camera check</h2>
+          <div class="cam-box" id="camBox">
+            <video id="cam" playsinline muted autoplay></video>
+            <div class="cam-status" id="camStatus">
+              <div class="spinner" id="setupSpinner"></div>
+              <p id="setupMsg">Starting camera</p>
+            </div>
+            <div class="hand-badge hidden" id="handBadge">
+              <span class="ic-slot" data-icon="check"></span><span data-i18n="handReady">Hand detected!</span>
+            </div>
+          </div>
+          <p class="muted center-txt setup-hint" id="setupHint" data-i18n="showYourHand">Show your open hand to the camera</p>
+          <div class="center gap-10 wrap">
+            <button class="btn btn-ghost" id="btnRetry" type="button">
+              <span class="ic-slot" data-icon="refresh"></span><span data-i18n="retry">Retry</span>
+            </button>
+            <button class="btn btn-outline" id="btnPointer2" type="button">
+              <span class="ic-slot" data-icon="hand"></span><span data-i18n="playWithPointer">Play with touch / mouse</span>
+            </button>
+            <button class="btn btn-ghost" id="btnBack" type="button">
+              <span class="ic-slot" data-icon="back"></span><span data-i18n="back">Back</span>
+            </button>
+          </div>
+          <p class="small muted center-txt https-note" data-i18n="httpsHint">Camera access requires HTTPS.</p>
+        </div>
+      </section>
+
+      <!-- ============ PLAY SCREEN ============ -->
+      <section class="screen" id="scrPlay">
+        <div class="stage" id="stage">
+          <canvas id="skeleton"></canvas>
+          <div class="zone-layer hidden" id="zoneLayer">
+            <div class="zone-tint z1"></div>
+            <div class="zone-divider"></div>
+            <div class="zone-tint z2"></div>
+          </div>
+          <div class="products-layer" id="productsLayer"></div>
+          <div class="cursor p1" id="cursor1"><span class="dot"></span></div>
+          <div class="cursor p2 hidden" id="cursor2"><span class="dot"></span></div>
+
+          <div class="motion-hud">
+            <button class="btn btn-icon hud-btn" id="btnPause" type="button" data-i18n-aria="pause">
+              <span class="ic-slot" data-icon="pause"></span>
+            </button>
+            <div class="timer-pill" id="timerPill">
+              <span class="ic-slot" data-icon="timer"></span><span id="timeText">60</span>
+            </div>
+            <div class="grow"></div>
+            <div class="score-pill p1" id="pill1"><span class="p-label" data-i18n="zoneP1">P1</span><span class="num" id="s1">0</span></div>
+            <div class="score-pill p2 hidden" id="pill2"><span class="p-label" data-i18n="zoneP2">P2</span><span class="num" id="s2">0</span></div>
+          </div>
+
+          <div class="countdown hidden" id="countdown">3</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ============ PAUSE OVERLAY ============ -->
+  <div class="overlay" id="pauseOverlay">
+    <div class="card pause-card">
+      <h2 class="title-lg" data-i18n="paused">Paused</h2>
+      <div class="col gap-10 mt-20">
+        <button class="btn btn-primary btn-block" id="btnResume" type="button">
+          <span class="ic-slot" data-icon="play"></span><span data-i18n="resume">Resume</span>
+        </button>
+        <button class="btn btn-ghost btn-block" id="btnRestartRound" type="button">
+          <span class="ic-slot" data-icon="refresh"></span><span data-i18n="restart">Restart round</span>
+        </button>
+        <button class="btn btn-ghost btn-block" id="btnQuit" type="button">
+          <span class="ic-slot" data-icon="home"></span><span data-i18n="quit">Quit</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ RESULTS OVERLAY ============ -->
+  <div class="overlay" id="resultOverlay">
+    <div class="card result-card">
+      <img id="resImg" class="res-img hidden" alt="">
+      <h2 class="title-lg" id="resTitle">Results</h2>
+      <div class="res-rows" id="resRows"></div>
+      <p class="muted" id="resBest"></p>
+      <div class="center gap-10 mt-20 wrap">
+        <button class="btn btn-primary" id="btnAgain" type="button">
+          <span class="ic-slot" data-icon="refresh"></span><span data-i18n="retry">Play again</span>
+        </button>
+        <button class="btn btn-ghost" id="btnChangeMode" type="button">
+          <span class="ic-slot" data-icon="swap"></span><span data-i18n="home">Home</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="../../shared/icons.js"></script>
+  <script src="../../shared/i18n.js"></script>
+  <script src="../../shared/branding.js"></script>
+  <script src="../../shared/storage.js"></script>
+  <script src="../../shared/sound.js"></script>
+  <script src="../../shared/fullscreen.js"></script>
+  <script src="../../shared/fx.js"></script>
+  <script src="motion.js"></script>
+</body>
+</html>

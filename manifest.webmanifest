@@ -1,0 +1,24 @@
+{
+  "name": "Mashhoor Games Suite",
+  "short_name": "Mashhoor Games",
+  "description": "Official interactive games for Mashhoor Fried Chicken — XO, Motion Challenge and Chicken Dash.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FDF4F3",
+  "theme_color": "#EE2231",
+  "lang": "en",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Mashhoor XO", "url": "games/mashhoor-xo/index.html" },
+    { "name": "Motion Challenge", "url": "games/mashhoor-motion/index.html" },
+    { "name": "Chicken Dash", "url": "games/chicken-dash/index.html" }
+  ]
+}

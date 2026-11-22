@@ -1,0 +1,64 @@
+/* Mashhoor XO — game styles (built on shared/ui.css) */
+
+.menu-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 10px 18px calc(26px + var(--sab)); overflow: auto; }
+.center-txt { text-align: center; }
+.xo-tag { font-size: 16px; }
+
+.vs-row { display: flex; align-items: center; gap: 14px; margin-top: 4px; flex-wrap: wrap; justify-content: center; }
+.p-card { display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--surface); border-radius: 20px; padding: 16px 20px; box-shadow: var(--shadow-1); min-width: 128px; }
+.p-card img { width: 64px; height: 64px; object-fit: contain; }
+.p-name { font-family: var(--font-display); font-weight: 800; font-size: 16px; color: var(--brand-dark); }
+.p-label { font-size: 12px; color: var(--muted); font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+.vs-badge { font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--brand-primary); }
+
+.mode-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.cpu-level { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.seg { display: inline-flex; background: var(--surface); border-radius: 14px; padding: 4px; box-shadow: var(--shadow-1); gap: 2px; }
+.seg button { padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 15px; color: var(--muted); font-family: var(--font-display); transition: background .2s, color .2s; }
+.seg button.on { background: var(--brand-primary); color: #fff; }
+
+.xo-how { display: flex; gap: 10px; max-width: 540px; align-items: flex-start; width: 100%; }
+.xo-how .ic-slot { color: var(--brand-primary); flex: none; margin-top: 2px; }
+.xo-how p { font-size: 14px; line-height: 1.55; color: var(--muted); }
+
+/* ---------- game screen ---------- */
+#scrGame { gap: 8px; }
+.players-bar { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 6px 14px; flex-wrap: wrap; }
+.player-chip { opacity: .5; transition: opacity .3s, box-shadow .3s; }
+.player-chip.on { opacity: 1; }
+.player-chip img { width: 34px; height: 34px; object-fit: contain; }
+.turn-chip { background: var(--brand-primary); color: #fff; box-shadow: 0 6px 16px rgba(238, 34, 49, .4); }
+.turn-chip img { width: 32px; height: 32px; object-fit: contain; }
+
+.board-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 4px; min-height: 0; }
+.board { --cell: clamp(80px, 20vmin, 148px); display: grid; grid-template-columns: repeat(3, var(--cell)); gap: 10px; }
+.cell {
+  width: var(--cell); height: var(--cell); border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow-1), inset 0 0 0 2px var(--line);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .15s, background .3s, box-shadow .3s;
+  touch-action: manipulation;
+}
+.cell:active { transform: scale(.94); }
+.cell .cell-mark { width: 76%; height: 76%; display: flex; align-items: center; justify-content: center; }
+.cell .cell-mark img {
+  width: 100%; height: 100%; object-fit: contain;
+  animation: popIn .35s cubic-bezier(.34, 1.56, .64, 1) both;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .18));
+}
+.cell.win { background: rgba(255, 197, 61, .4); box-shadow: 0 0 0 3px var(--brand-gold), 0 10px 26px rgba(255, 197, 61, .45); animation: winPulse .9s ease infinite; }
+.cell.dim .cell-mark { opacity: .38; }
+.draw-count { gap: 10px; }
+
+.game-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 4px 16px calc(16px + var(--sab)); }
+
+/* ---------- result overlay ---------- */
+.result-card { align-items: center; text-align: center; gap: 10px; display: flex; flex-direction: column; }
+.result-img { width: 110px; height: 110px; object-fit: contain; animation: popIn .5s cubic-bezier(.34, 1.56, .64, 1) both; }
+
+@media (max-width: 560px) {
+  .p-card img { width: 52px; height: 52px; }
+  .p-card { min-width: 104px; padding: 12px 14px; }
+  .players-bar { gap: 8px; }
+}

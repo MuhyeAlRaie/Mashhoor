@@ -1,0 +1,61 @@
+/* Mashhoor Games — Admin panel styles */
+
+.admin-main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 6px 16px calc(40px + var(--sab)); display: flex; flex-direction: column; gap: 16px; }
+
+.tabs {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; gap: 6px; overflow-x: auto;
+  padding: 8px 14px 12px;
+  background: linear-gradient(var(--bg) 82%, transparent);
+  -webkit-overflow-scrolling: touch;
+}
+.tab {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 16px; border-radius: 14px;
+  background: var(--surface); box-shadow: var(--shadow-1);
+  font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--muted);
+  white-space: nowrap; transition: background .2s, color .2s;
+}
+.tab .ic { width: 19px; height: 19px; }
+.tab.on { background: var(--brand-primary); color: #fff; }
+
+.tab-panel { display: none; flex-direction: column; gap: 16px; }
+.tab-panel.show { display: flex; animation: slideUpFade .3s ease both; }
+
+.notice {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: rgba(255, 197, 61, .16); border: 1.5px solid rgba(255, 197, 61, .5);
+  border-radius: var(--radius-s); padding: 14px 16px;
+}
+.notice .ic-slot { display: flex; color: #8a6a00; flex: none; margin-top: 2px; }
+.notice p { font-size: 13.5px; line-height: 1.6; color: #6b5200; font-weight: 600; }
+
+.card h3 { font-size: 18px; color: var(--brand-dark); margin-bottom: 14px; }
+.card h3 + .hint { margin-top: -8px; margin-bottom: 14px; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px 22px; }
+.colors-row { display: flex; gap: 26px; flex-wrap: wrap; }
+.color-line { display: flex; align-items: center; gap: 12px; }
+.color-line code { font-weight: 700; color: var(--muted); font-size: 14px; }
+
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+.img-upload { margin-top: 4px; }
+.img-upload[data-optional] .df-btn { display: none; }
+.img-upload:not([data-optional]) .rm-btn { display: none; }
+
+.product-card { display: flex; flex-direction: column; gap: 6px; }
+.product-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.product-head img { width: 40px; height: 40px; object-fit: contain; }
+.product-head .pkey { font-weight: 800; font-family: var(--font-display); color: var(--brand-primary); text-transform: capitalize; }
+
+.skin-card { padding: 14px; }
+.skin-card + .skin-card { margin-top: 12px; }
+.skin-title { font-weight: 800; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+
+#usageLine { font-size: 13.5px; }
+
+@media (max-width: 560px) {
+  .tab { padding: 10px 13px; font-size: 14px; }
+  .colors-row { gap: 14px; }
+}

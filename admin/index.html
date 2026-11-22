@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mashhoor Games — Admin Panel</title>
+  <meta name="description" content="Admin panel: customize branding, products, colors and game settings for the Mashhoor Games Suite.">
+  <meta name="theme-color" content="#EE2231">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="page bg-stripes admin-page">
+    <header class="topbar">
+      <a class="btn btn-icon btn-ghost" href="../index.html" data-i18n-aria="home"><span class="ic-slot" data-icon="home"></span></a>
+      <img class="topbar-logo sm" id="brandLogo" alt="Mashhoor">
+      <div class="topbar-title" data-i18n="adminTitle">Admin &amp; Customization</div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <button class="btn btn-icon btn-ghost" id="langBtn" type="button" data-i18n-aria="language"><span class="lang-label">ع</span></button>
+        <button class="btn btn-icon btn-ghost" id="soundBtn" type="button" data-i18n-aria="sound"></button>
+      </div>
+    </header>
+
+    <nav class="tabs" id="tabs" aria-label="Sections">
+      <button class="tab on" data-tab="branding" type="button"><span class="ic-slot" data-icon="palette"></span><span data-i18n="tabBranding">Branding</span></button>
+      <button class="tab" data-tab="products" type="button"><span class="ic-slot" data-icon="box"></span><span data-i18n="tabProducts">Products</span></button>
+      <button class="tab" data-tab="xo" type="button"><span class="ic-slot" data-icon="gamepad"></span><span data-i18n="tabXO">XO</span></button>
+      <button class="tab" data-tab="motion" type="button"><span class="ic-slot" data-icon="camera"></span><span data-i18n="tabMotion">Motion</span></button>
+      <button class="tab" data-tab="dash" type="button"><span class="ic-slot" data-icon="bolt"></span><span data-i18n="tabDash">Chicken Dash</span></button>
+      <button class="tab" data-tab="data" type="button"><span class="ic-slot" data-icon="database"></span><span data-i18n="tabData">Data</span></button>
+    </nav>
+
+    <main class="admin-main">
+
+      <!-- ================= BRANDING ================= -->
+      <section class="tab-panel show" id="tab-branding">
+        <div class="notice"><span class="ic-slot" data-icon="info"></span><p data-i18n="storageWarning"></p></div>
+
+        <div class="card">
+          <h3 data-i18n="logoLightBg">Logo for light backgrounds</h3>
+          <div class="img-upload" data-bind-img="brand.logoLightBg" data-img-format="jpeg" data-img-max="720">
+            <div class="preview"><img alt=""></div>
+            <div class="actions">
+              <div class="btn-row">
+                <button class="btn btn-sm btn-ghost up-btn" type="button"><span class="ic-slot" data-icon="upload"></span><span data-i18n="uploadImage">Upload</span></button>
+                <button class="btn btn-sm btn-outline df-btn" type="button"><span class="ic-slot" data-icon="refresh"></span><span data-i18n="restoreImg">Restore</span></button>
+              </div>
+              <span class="file-name"></span>
+            </div>
+            <input type="file" accept="image/*" class="hidden">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="logoDarkBg">Logo for dark backgrounds</h3>
+          <div class="img-upload" data-bind-img="brand.logoDarkBg" data-img-format="jpeg" data-img-max="720">
+            <div class="preview"><img alt=""></div>
+            <div class="actions">
+              <div class="btn-row">
+                <button class="btn btn-sm btn-ghost up-btn" type="button"><span class="ic-slot" data-icon="upload"></span><span data-i18n="uploadImage">Upload</span></button>
+                <button class="btn btn-sm btn-outline df-btn" type="button"><span class="ic-slot" data-icon="refresh"></span><span data-i18n="restoreImg">Restore</span></button>
+              </div>
+              <span class="file-name"></span>
+            </div>
+            <input type="file" accept="image/*" class="hidden">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="identityLabel">Identity</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label data-i18n="brandName">Brand name</label>
+              <input class="input" type="text" data-bind="brand.name">
+            </div>
+            <div class="field">
+              <label data-i18n="taglineLabel">Tagline</label>
+              <input class="input" type="text" data-bind="brand.tagline">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="primaryColor">Colors</h3>
+          <div class="colors-row">
+            <div class="field">
+              <label data-i18n="primaryColor">Primary (red)</label>
+              <div class="color-line"><input type="color" data-bind="brand.colors.primary"><code id="colPrimary">#EE2231</code></div>
+            </div>
+            <div class="field">
+              <label data-i18n="darkColor">Dark</label>
+              <div class="color-line"><input type="color" data-bind="brand.colors.dark"><code id="colDark">#1A1B20</code></div>
+            </div>
+            <div class="field">
+              <label data-i18n="goldColor">Accent (gold)</label>
+              <div class="color-line"><input type="color" data-bind="brand.colors.gold"><code id="colGold">#FFC53D</code></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="soundsEnabled">Sound &amp; language</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label class="switch"><input type="checkbox" data-bind="sounds.enabled"><span class="track"></span><span data-i18n="soundsEnabled">Sound effects</span></label>
+              <label data-i18n="volume">Volume <span class="range-val" data-rv="sounds.volume">80%</span></label>
+              <input type="range" min="0" max="1" step="0.05" data-bind="sounds.volume" data-fmt="percent">
+            </div>
+            <div class="field">
+              <label data-i18n="defaultLanguage">Default interface language</label>
+              <select class="input" data-bind="language">
+                <option value="en">English</option>
+                <option value="ar">العربية (Arabic)</option>
+              </select>
+              <p class="hint" data-i18n="languageNote"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PRODUCTS ================= -->
+      <section class="tab-panel" id="tab-products">
+        <div class="notice"><span class="ic-slot" data-icon="info"></span><p data-i18n="productImagesNames"></p></div>
+        <div id="productCards"></div>
+      </section>
+
+      <!-- ================= XO ================= -->
+      <section class="tab-panel" id="tab-xo">
+        <div class="card">
+          <h3 data-i18n="xoSettings">XO settings</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label data-i18n="defaultMode">Default mode</label>
+              <select class="input" data-bind="xo.mode">
+                <option value="pvp" data-i18n="twoPlayers">2 Players</option>
+                <option value="cpu" data-i18n="vsComputer">vs Computer</option>
+              </select>
+            </div>
+            <div class="field">
+              <label data-i18n="cpuDifficulty">Computer level</label>
+              <select class="input" data-bind="xo.cpuLevel">
+                <option value="easy" data-i18n="easy">Easy</option>
+                <option value="normal" data-i18n="normal">Normal</option>
+                <option value="hard" data-i18n="hard">Hard</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MOTION ================= -->
+      <section class="tab-panel" id="tab-motion">
+        <div class="card">
+          <h3 data-i18n="motionSettings">Motion Challenge settings</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label data-i18n="roundDuration">Round duration <span class="range-val" data-rv="motion.duration">60s</span></label>
+              <input type="range" min="20" max="120" step="5" data-bind="motion.duration" data-fmt="sec">
+            </div>
+            <div class="field">
+              <label data-i18n="difficulty">Difficulty</label>
+              <select class="input" data-bind="motion.difficulty">
+                <option value="easy" data-i18n="easy">Easy</option>
+                <option value="normal" data-i18n="normal">Normal</option>
+                <option value="hard" data-i18n="hard">Hard</option>
+              </select>
+            </div>
+            <div class="field">
+              <label data-i18n="defaultMode">Default mode</label>
+              <select class="input" data-bind="motion.mode">
+                <option value="single" data-i18n="singlePlayer">Single player</option>
+                <option value="two" data-i18n="twoPlayersMotion">Two players</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="switch"><input type="checkbox" data-bind="motion.showSkeleton"><span class="track"></span><span data-i18n="showSkeleton">Show hand skeleton</span></label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= CHICKEN DASH ================= -->
+      <section class="tab-panel" id="tab-dash">
+        <div class="card">
+          <h3 data-i18n="dashSettings">Chicken Dash settings</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label data-i18n="gameName">Game name</label>
+              <input class="input" type="text" data-bind="dash.gameName">
+            </div>
+            <div class="field">
+              <label data-i18n="speedMultiplier">Speed multiplier <span class="range-val" data-rv="dash.speed">1.0x</span></label>
+              <input type="range" min="0.8" max="1.5" step="0.05" data-bind="dash.speed" data-fmt="x">
+            </div>
+            <div class="field">
+              <label class="switch"><input type="checkbox" data-bind="dash.touchButtons"><span class="track"></span><span data-i18n="touchButtonsLabel">Show touch buttons</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="characterSkins">Chicken characters (skins)</h3>
+          <div id="skinCards"></div>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="backgroundImage">Runner background (optional)</h3>
+          <div class="img-upload" data-bind-img="dash.backgroundImage" data-img-format="jpeg" data-img-max="900" data-optional="1">
+            <div class="preview"><img alt=""></div>
+            <div class="actions">
+              <div class="btn-row">
+                <button class="btn btn-sm btn-ghost up-btn" type="button"><span class="ic-slot" data-icon="upload"></span><span data-i18n="uploadImage">Upload</span></button>
+                <button class="btn btn-sm btn-ghost rm-btn" type="button"><span class="ic-slot" data-icon="trash"></span><span data-i18n="removeImage">Remove</span></button>
+              </div>
+              <span class="file-name"></span>
+            </div>
+            <input type="file" accept="image/*" class="hidden">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="customMusic">Background music (optional)</h3>
+          <div class="img-upload" data-bind-music="dash.music" data-optional="1">
+            <div class="preview"><span class="ic-slot" data-icon="volume2" style="width:34px;height:34px;color:var(--brand-primary)"></span></div>
+            <div class="actions">
+              <div class="btn-row">
+                <button class="btn btn-sm btn-ghost up-btn" type="button"><span class="ic-slot" data-icon="upload"></span><span data-i18n="uploadImage">Upload</span></button>
+                <button class="btn btn-sm btn-ghost rm-btn" type="button"><span class="ic-slot" data-icon="trash"></span><span data-i18n="removeImage">Remove</span></button>
+              </div>
+              <span class="file-name"></span>
+            </div>
+            <input type="file" accept="audio/*" class="hidden">
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= DATA ================= -->
+      <section class="tab-panel" id="tab-data">
+        <div class="notice"><span class="ic-slot" data-icon="info"></span><p data-i18n="storageWarning"></p></div>
+        <div class="card">
+          <h3 data-i18n="exportSettings">Backup &amp; restore</h3>
+          <div class="btn-row wrap">
+            <button class="btn btn-primary" id="btnExport" type="button"><span class="ic-slot" data-icon="download"></span><span data-i18n="exportSettings">Export (JSON)</span></button>
+            <button class="btn btn-ghost" id="btnImport" type="button"><span class="ic-slot" data-icon="upload"></span><span data-i18n="importSettings">Import (JSON)</span></button>
+            <input type="file" accept="application/json,.json" class="hidden" id="importFile">
+          </div>
+          <p class="hint mt-14" id="usageLine"></p>
+        </div>
+        <div class="card">
+          <h3 data-i18n="clearScores">Danger zone</h3>
+          <div class="btn-row wrap">
+            <button class="btn btn-ghost" id="btnClearScores" type="button"><span class="ic-slot" data-icon="trash"></span><span data-i18n="clearScores">Clear saved scores</span></button>
+            <button class="btn btn-ghost" id="btnResetAll" type="button"><span class="ic-slot" data-icon="refresh"></span><span data-i18n="resetAll">Restore defaults</span></button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="../shared/icons.js"></script>
+  <script src="../shared/i18n.js"></script>
+  <script src="../shared/branding.js"></script>
+  <script src="../shared/storage.js"></script>
+  <script src="../shared/sound.js"></script>
+  <script src="../shared/fullscreen.js"></script>
+  <script src="../shared/fx.js"></script>
+  <script src="../shared/pwa.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

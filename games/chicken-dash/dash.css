@@ -1,0 +1,114 @@
+/* Mashhoor Chicken Dash — styles (canvas behind DOM overlays) */
+
+#dashApp { background: #7f0f16; overflow: hidden; user-select: none; -webkit-user-select: none; }
+#game { position: absolute; inset: 0; touch-action: none; }
+
+/* ---------- HUD ---------- */
+.dash-hud {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 5;
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: calc(12px + var(--sat)) calc(16px + var(--sar)) 0 calc(16px + var(--sal));
+  pointer-events: none;
+}
+.dash-hud .btn { pointer-events: auto; }
+.hud-left { display: flex; flex-direction: column; }
+.hud-score {
+  font-family: var(--font-display); font-weight: 800; font-size: 40px; line-height: 1;
+  color: #fff; text-shadow: 0 3px 14px rgba(0, 0, 0, .45);
+}
+.hud-sub { color: rgba(255, 255, 255, .85); font-weight: 700; font-size: 14px; text-shadow: 0 2px 8px rgba(0, 0, 0, .4); }
+.hud-btn { background: rgba(20, 12, 12, .55); color: #fff; border: 0; }
+
+/* ---------- touch buttons ---------- */
+.touch-buttons {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;
+  display: flex; justify-content: center; align-items: flex-end; gap: 14px;
+  padding: 0 18px calc(16px + var(--sab));
+  pointer-events: none;
+}
+.tb {
+  pointer-events: auto;
+  width: 66px; height: 66px; border-radius: 50%;
+  background: rgba(20, 12, 12, .42); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid rgba(255, 255, 255, .35);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  touch-action: manipulation; transition: transform .12s, background .2s;
+}
+.tb:active { transform: scale(.9); background: rgba(238, 34, 49, .55); }
+.tb .ic { width: 30px; height: 30px; }
+.tb-primary { background: rgba(238, 34, 49, .6); width: 78px; height: 78px; margin-bottom: 10px; }
+
+/* ---------- DOM screens over canvas ---------- */
+.dash-screen {
+  position: absolute; inset: 0; z-index: 6;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; padding: 24px 20px calc(28px + var(--sab));
+  background: rgba(90, 10, 16, .25);
+  opacity: 0; pointer-events: none; transform: translateY(16px);
+  transition: opacity .3s ease, transform .3s ease;
+  overflow: hidden auto;
+}
+.dash-screen.show { opacity: 1; pointer-events: auto; transform: none; }
+.dash-screen.dim { background: rgba(22, 8, 10, .62); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+
+.ds-logo { height: 92px; width: auto; filter: drop-shadow(0 8px 22px rgba(0, 0, 0, .35)); }
+.ds-title { font-family: var(--font-display); font-weight: 800; font-size: 42px; color: #fff; text-shadow: 0 4px 20px rgba(0, 0, 0, .45); text-align: center; }
+.ds-tag { color: rgba(255, 255, 255, .88); font-weight: 600; }
+.ds-play { min-width: 240px; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); }
+.ds-menu-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.install-hint { max-width: 420px; text-align: center; color: rgba(255, 255, 255, .65); }
+
+/* character select */
+.chars-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; max-width: 560px; }
+.char-card {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  background: var(--surface); border-radius: 20px; padding: 16px 14px;
+  min-width: 128px; box-shadow: var(--shadow-1);
+  border: 3px solid transparent; transition: border-color .2s, transform .2s;
+}
+.char-card img { width: 84px; height: 104px; object-fit: contain; }
+.char-card .cname { font-family: var(--font-display); font-weight: 800; font-size: 15px; color: var(--brand-dark); }
+.char-card.sel { border-color: var(--brand-primary); transform: translateY(-4px); box-shadow: var(--shadow-2); }
+
+/* how to play */
+.how-list { display: flex; flex-direction: column; gap: 14px; max-width: 480px; width: 100%; }
+.how-line { display: flex; align-items: center; gap: 14px; }
+.hl-icons { display: flex; gap: 6px; flex: none; }
+.hl-icons .ic-slot { display: flex; width: 42px; height: 42px; border-radius: 12px; background: rgba(238, 34, 49, .1); color: var(--brand-primary); align-items: center; justify-content: center; }
+.how-line p { color: var(--ink); font-weight: 600; font-size: 15px; }
+
+/* pause + game over cards */
+.pause-card, .over-card { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: min(320px, 86vw); }
+.over-img { width: 108px; height: 108px; object-fit: contain; margin-top: -56px; margin-bottom: -6px; filter: drop-shadow(0 10px 16px rgba(0, 0, 0, .25)); }
+.over-card { padding-top: 18px; }
+.over-score { display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--muted); }
+.over-score .num { font-family: var(--font-display); font-weight: 800; font-size: 38px; color: var(--brand-primary); }
+.over-score.sub .num { font-size: 24px; color: var(--brand-dark); }
+.new-best {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--brand-gold); color: #4a3300;
+  padding: 8px 18px; border-radius: 999px;
+  font-family: var(--font-display); font-weight: 800; font-size: 16px;
+  animation: popIn .4s cubic-bezier(.34, 1.56, .64, 1) both, winPulse 1.2s ease .4s infinite;
+}
+.new-best .ic-slot { display: flex; }
+
+/* rotate overlay */
+.rotate-overlay {
+  position: fixed; inset: 0; z-index: 50;
+  background: var(--brand-dark); color: #fff;
+  display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  text-align: center; padding: 30px; font-family: var(--font-display); font-weight: 700; font-size: 20px;
+}
+.rotate-overlay .ic { width: 52px; height: 52px; }
+@media (orientation: landscape) and (max-height: 540px) and (max-width: 1000px) {
+  .rotate-overlay { display: flex; }
+}
+
+@media (max-width: 560px) {
+  .ds-title { font-size: 32px; }
+  .hud-score { font-size: 32px; }
+  .tb { width: 58px; height: 58px; }
+  .tb-primary { width: 68px; height: 68px; }
+}
