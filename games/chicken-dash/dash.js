@@ -52,7 +52,8 @@
   function playerH() { return Math.max(66, Math.min(132, W * 0.27)); }
   function baseSpeed() { return Math.max(250, H * 0.52); }
   function GRAV() { return 3400 * (H / 740); }
-  function JUMPV() { return -1250 * (H / 740); }
+  /* P.y = height above ground (positive = up). Jump launches upward, gravity pulls back. */
+  function JUMPV() { return 1250 * (H / 740); }
   function GOLD_POINTS() { return 50; }
 
   /* ---------- state ---------- */
@@ -209,7 +210,7 @@
   }
   function slide() {
     if (state !== ST.PLAY) return;
-    if (P.jumping) { P.vy = Math.max(P.vy, 520 * (H / 740)); return; } /* fast-fall */
+    if (P.jumping) { P.vy = Math.min(P.vy, -520 * (H / 740)); return; } /* fast-fall (downward) */
     if (!P.sliding) { P.sliding = true; P.slideT = 0.62; S.play('slide'); }
     else P.slideT = 0.62;
   }
@@ -353,8 +354,8 @@
     if (state === ST.PLAY) {
       if (P.jumping) {
         P.y += P.vy * dt;
-        P.vy += GRAV() * dt;
-        if (P.y <= 0) { P.y = 0; P.vy = 0; P.jumping = false; }
+        P.vy -= GRAV() * dt; /* gravity decelerates the upward motion */
+        if (P.y <= 0 && P.vy < 0) { P.y = 0; P.vy = 0; P.jumping = false; }
       }
       if (P.sliding) {
         P.slideT -= dt;
@@ -624,7 +625,7 @@
     var bob = (!P.jumping && !P.sliding) ? Math.sin(P.runT * 15) * ph * 0.035 : 0;
     ctx.save();
     ctx.translate(P.x, gy - P.y + bob);
-    if (P.jumping) ctx.rotate(Math.max(-0.35, Math.min(0.35, P.vy * 0.00035)));
+    if (P.jumping) ctx.rotate(Math.max(-0.35, Math.min(0.35, -P.vy * 0.00035)));
     if (P.sliding) { ctx.scale(1.18, 0.6); ctx.translate(0, ph * 0.32); }
     if (im && im.complete && im.naturalWidth) {
       var w = ph * (im.width / im.height);
