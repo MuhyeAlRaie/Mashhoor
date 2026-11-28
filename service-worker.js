@@ -4,7 +4,7 @@
    IMPORTANT: bump VERSION whenever you release changed files,
    then the new cache takes over on the next visit.
    ============================================================ */
-var VERSION = 'mashhoor-v1.0.1';
+var VERSION = 'mashhoor-v1.0.2';
 
 var CORE = [
   './',

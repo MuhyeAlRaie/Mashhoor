@@ -221,6 +221,7 @@
   }
 
   var swipe = null;
+  var slideHeld = false, slidePid = null; /* slide button/key held: stay down + dive */
   canvas.addEventListener('pointerdown', function (e) {
     if (state !== ST.PLAY) return;
     swipe = { x: e.clientX, y: e.clientY, t: performance.now() };
@@ -241,16 +242,20 @@
   canvas.addEventListener('pointercancel', function () { swipe = null; });
 
   document.addEventListener('keydown', function (e) {
-    if (e.repeat) return;
     var k = e.key;
+    if (k === 'ArrowDown' || k === 's' || k === 'S') { slideHeld = true; slide(); e.preventDefault(); return; } /* repeats extend the slide */
+    if (e.repeat) return;
     if (k === 'ArrowUp' || k === 'w' || k === 'W' || k === ' ') { jump(); e.preventDefault(); }
-    else if (k === 'ArrowDown' || k === 's' || k === 'S') { slide(); e.preventDefault(); }
     else if (k === 'ArrowLeft' || k === 'a' || k === 'A') { moveLane(-1); }
     else if (k === 'ArrowRight' || k === 'd' || k === 'D') { moveLane(1); }
     else if (k === 'p' || k === 'P' || k === 'Escape') {
       if (state === ST.PLAY) pauseGame();
       else if (state === ST.PAUSE) resumeGame();
     }
+  });
+  document.addEventListener('keyup', function (e) {
+    var k = e.key;
+    if (k === 'ArrowDown' || k === 's' || k === 'S') { slideHeld = false; slidePid = null; }
   });
 
   function bindHold(el, fn) {
@@ -259,7 +264,18 @@
   bindHold($('tbLeft'), function () { moveLane(-1); });
   bindHold($('tbRight'), function () { moveLane(1); });
   bindHold($('tbJump'), jump);
-  bindHold($('tbSlide'), slide);
+  /* slide button: hold to stay down (and dive while airborne) */
+  $('tbSlide').addEventListener('pointerdown', function (e) {
+    e.preventDefault(); e.stopPropagation();
+    slideHeld = true; slidePid = e.pointerId; slide();
+  }, { passive: false });
+  document.addEventListener('pointerup', function (e) {
+    if (slidePid !== null && e.pointerId === slidePid) { slideHeld = false; slidePid = null; }
+  });
+  document.addEventListener('pointercancel', function (e) {
+    if (slidePid !== null && e.pointerId === slidePid) { slideHeld = false; slidePid = null; }
+  });
+  window.addEventListener('blur', function () { slideHeld = false; slidePid = null; });
 
   /* ============================================================
      SPAWNING
@@ -289,7 +305,7 @@
     });
   }
 
-  function spawnPattern() {
+  function spawnPattern(speed) {
     var u = unlocked();
     var pool = ['crate', 'items', 'items'];
     if (u.double) pool.push('double');
@@ -320,7 +336,8 @@
       spawnItem(W + 80 + (free - 1) * ph * 0.3, gy - ph * 0.55, Math.random() < 0.1);
     } else if (kind === 'bar') {
       G.obstacles.push({ type: 'bar', lane: -1, x: W + 80, w: W * 0.96, h: 0, dead: false });
-      spawnItem(W + 80 + W * 0.48, gy - ph * 0.3, Math.random() < 0.12);
+      /* reward placed AFTER the barrier — never under it (no death lure) */
+      spawnItem(W + 80 + W * 1.06, gy - ph * 0.55, Math.random() < 0.12);
     } else { /* items line or arc */
       var lane2 = Math.floor(Math.random() * 3);
       var n = 3 + Math.floor(Math.random() * 2);
@@ -332,7 +349,14 @@
         spawnItem(W + 80 + i * ph * 0.75, yy, false);
       }
     }
-    G.nextSpawn = H * (0.62 + Math.random() * 0.5);
+    /* Spacing must stay fair as speed rises: never shorter than a full
+       jump arc + reaction time; extra room after bars and lane-forcing
+       doubles; a bar also needs room for its own width so nothing ever
+       spawns overlapping its slide-under zone. */
+    var gap = Math.max(H * 0.85, speed * 0.9);
+    if (kind === 'bar') gap = Math.max(gap, speed * 1.3, W * 0.96 + ph * 1.3);
+    if (kind === 'double') gap = Math.max(gap, speed * 1.1);
+    G.nextSpawn = gap * (0.95 + Math.random() * 0.35);
   }
 
   /* ============================================================
@@ -353,11 +377,13 @@
     /* player physics */
     if (state === ST.PLAY) {
       if (P.jumping) {
+        if (slideHeld) P.vy = Math.min(P.vy, -520 * (H / 740)); /* holding slide = dive */
         P.y += P.vy * dt;
         P.vy -= GRAV() * dt; /* gravity decelerates the upward motion */
         if (P.y <= 0 && P.vy < 0) { P.y = 0; P.vy = 0; P.jumping = false; }
       }
       if (P.sliding) {
+        if (slideHeld) P.slideT = Math.max(P.slideT, 0.1); /* holding keeps the slide alive */
         P.slideT -= dt;
         if (P.slideT <= 0) P.sliding = false;
       }
@@ -376,7 +402,7 @@
 
     /* spawning */
     G.nextSpawn -= speed * dt;
-    if (G.nextSpawn <= 0) spawnPattern();
+    if (G.nextSpawn <= 0) spawnPattern(speed);
 
     /* obstacles */
     var ph = playerH();
@@ -423,7 +449,7 @@
 
   function hitObstacle(o, ph, gy) {
     var pw = ph * 0.6;
-    var standH = P.sliding ? ph * 0.5 : ph * 0.94;
+    var standH = P.sliding ? ph * 0.42 : ph * 0.94; /* crouch hitbox matches the visual */
     var px0 = P.x - pw / 2 + pw * 0.12;
     var px1 = P.x + pw / 2 - pw * 0.12;
     var py1 = gy - P.y - ph * 0.06;              /* feet */
@@ -432,7 +458,7 @@
     if (o.type === 'bar') {
       ox0 = o.x; ox1 = o.x + o.w;
       oy0 = gy - ph * 1.5;
-      oy1 = gy - ph * 0.56;
+      oy1 = gy - ph * 0.68;
     } else {
       var ocx = laneX(o.lane);
       ox0 = ocx - o.w / 2 + o.w * 0.14;
@@ -533,11 +559,12 @@
 
   function drawObstacle(o, gy, ph) {
     if (o.type === 'bar') {
-      var y0 = gy - ph * 1.5, bh = ph * 0.34;
+      /* visible band must match the collision zone: top 1.5ph, bottom 0.68ph */
+      var y0 = gy - ph * 1.5, bh = ph * 0.82;
       ctx.save();
       ctx.fillStyle = '#3a2225';
-      ctx.fillRect(o.x + o.w * 0.04, y0 - 6, 8, bh + 6);
-      ctx.fillRect(o.x + o.w * 0.92, y0 - 6, 8, bh + 6);
+      ctx.fillRect(o.x + o.w * 0.04, y0 - 6, 8, gy - y0 + 6);
+      ctx.fillRect(o.x + o.w * 0.92, y0 - 6, 8, gy - y0 + 6);
       ctx.fillStyle = B.get().brand.colors.primary;
       roundRect(o.x, y0, o.w, bh, 10);
       ctx.fill();
@@ -729,6 +756,7 @@
   function pauseGame() {
     if (state !== ST.PLAY) return;
     state = ST.PAUSE;
+    slideHeld = false; slidePid = null;
     musicStop();
     els.tbToggle.checked = B.get().dash.touchButtons !== false;
     showScreen(els.dsPause);
